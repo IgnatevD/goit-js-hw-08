@@ -67,54 +67,106 @@ const galleryItems = [
 ];
 
 const galleryList = document.querySelector('.gallery');
-
-
 const modalOpen = document.querySelector('.js-lightbox');
-
+const modalBd = document.querySelector('.lightbox__overlay');
 const modalImg = document.querySelector('.lightbox__image');
-console.log(modalImg.src);
-
-
 const modalClose = document.querySelector('.lightbox__button');
+let modalOpenImg;
 
-
-const gallerLiImg = galleryItems.map(item =>
+const gallerLiImg = galleryItems.map(({preview, original, description}) =>
   `<li class="gallery__item">
-  <a
-    class="gallery__link"
-    href="${item.original}"
-  >
     <img
       class="gallery__image"
-      src="${item.preview}"
-      data-source="${item.original}"
-      alt="${item.description}"
+      src="${preview}"
+      alt="${description}"
+      data-source="${original}"
     />
-  </a>
 </li>`
 );
 
-
-
-
 galleryList.insertAdjacentHTML('afterbegin', gallerLiImg.join(` `));
+galleryList.addEventListener(`click`, openMobalBd);
+modalBd.addEventListener(`click`, closeMobalBd);
+modalClose.addEventListener(`click`, deleteClassIsOpen);
 
-galleryList.addEventListener(`click`, onIn => {
+
+function openMobalBd(e) {
+  if (e.target.nodeName !== "IMG") return;
+  modalOpenImg = e.target;
+  const urlOriginalImg = e.target.dataset.source;
+  const altImg = e.target.alt;
+  
+  window.addEventListener(`keydown`, onEscAndArrowKeyPress);
+
   modalOpen.classList.add(`is-open`);
-  // modalImg.src = `${item.original}`;
-
-});
-
-
-
-modalOpen.addEventListener(`click`, closeMobalBd);
-
-modalClose.addEventListener(`click`, onIn => modalOpen.classList.remove(`is-open`));
-
-
-
+  modalImg.src = urlOriginalImg;
+  modalImg.alt = altImg;
+}
 
 function closeMobalBd(e) {
-  if (e.currentTarget === e.target)
-  modalOpen.classList.remove(`is-open`)
+  if (e.currentTarget === e.target) {
+    deleteClassIsOpen();
+  }
 };
+
+function deleteClassIsOpen() {
+  window.removeEventListener(`keydown`, onEscAndArrowKeyPress);
+  modalOpen.classList.remove(`is-open`);
+  modalImg.src = " ";
+}
+
+function cuurentImgModalLeft() {
+  const liParent = modalOpenImg.parentNode;
+  let liLeftmg;
+  if (liParent.previousElementSibling!== null) {
+    liLeftmg = liParent.previousElementSibling;
+  } else {
+    liLeftmg = galleryList.lastElementChild;
+  }
+
+  const imgLeft = liLeftmg.firstElementChild;
+  const imgLeftOriginal = imgLeft.dataset.source;
+  const imgLeftalt = imgLeft.alt;
+
+  modalImg.src = imgLeftOriginal;
+  modalImg.alt = imgLeftalt;
+
+  modalOpenImg = imgLeft;
+  if (liLeftmg.firstElementChild === null) {
+    imgLeft = galleryList.firstElementChild;
+  }
+  }
+
+function cuurentImgModalRight() {
+  const liParent = modalOpenImg.parentNode;
+  let liRightimg;
+  if (liParent.nextElementSibling!== null) {
+    liRightimg = liParent.nextElementSibling;
+  } else {
+    liRightimg = galleryList.firstElementChild;
+  }
+  const imgRight = liRightimg.firstElementChild;
+  const imgRightOriginal = imgRight.dataset.source;
+  const imgRightalt = imgRightOriginal.alt;
+
+  modalImg.src = imgRightOriginal;
+  modalImg.alt = imgRightalt;
+
+  modalOpenImg = imgRight;
+  }
+
+
+function onEscAndArrowKeyPress(e) {
+  
+  if (e.code === `Escape`) {
+    deleteClassIsOpen();
+  };
+
+  if (e.code === `ArrowLeft`) {
+    cuurentImgModalLeft();
+  };
+  
+  if (e.code === `ArrowRight`) {
+    cuurentImgModalRight();
+  }
+}
