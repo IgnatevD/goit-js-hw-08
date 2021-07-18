@@ -18,7 +18,7 @@ const galleryItems = [
       './images/img/КапатанМарвел340.jpg',
     original:
       './images/img/КапатанМарвел1920х1080.jpg',
-    description: 'Капатан Марвел',
+    description: 'Стражи Галактики',
   },
  
   {
