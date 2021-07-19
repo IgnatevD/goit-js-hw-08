@@ -85,6 +85,7 @@ const gallerLiImg = galleryItems.map(({preview, original, description}) =>
 );
 
 galleryList.insertAdjacentHTML('afterbegin', gallerLiImg.join(` `));
+
 galleryList.addEventListener(`click`, openMobalBd);
 modalBd.addEventListener(`click`, closeMobalBd);
 modalClose.addEventListener(`click`, deleteClassIsOpen);
@@ -101,7 +102,13 @@ function openMobalBd(e) {
   modalOpen.classList.add(`is-open`);
   modalImg.src = urlOriginalImg;
   modalImg.alt = altImg;
-}
+};
+
+function deleteClassIsOpen() {
+  window.removeEventListener(`keydown`, onEscAndArrowKeyPress);
+  modalOpen.classList.remove(`is-open`);
+  modalImg.src = " ";
+};
 
 function closeMobalBd(e) {
   if (e.currentTarget === e.target) {
@@ -109,13 +116,7 @@ function closeMobalBd(e) {
   }
 };
 
-function deleteClassIsOpen() {
-  window.removeEventListener(`keydown`, onEscAndArrowKeyPress);
-  modalOpen.classList.remove(`is-open`);
-  modalImg.src = " ";
-}
-
-function cuurentImgModalLeft() {
+function mixImgInModalLeft() {
   const liParent = modalOpenImg.parentNode;
   let liLeftmg;
   if (liParent.previousElementSibling!== null) {
@@ -125,19 +126,17 @@ function cuurentImgModalLeft() {
   }
 
   const imgLeft = liLeftmg.firstElementChild;
-  const imgLeftOriginal = imgLeft.dataset.source;
-  const imgLeftalt = imgLeft.alt;
 
-  modalImg.src = imgLeftOriginal;
-  modalImg.alt = imgLeftalt;
+  modalImg.src = imgLeft.dataset.source;
+  modalImg.alt = imgLeft.alt;
 
   modalOpenImg = imgLeft;
   if (liLeftmg.firstElementChild === null) {
     imgLeft = galleryList.firstElementChild;
   }
-  }
+};
 
-function cuurentImgModalRight() {
+function mixImgInModalRight() {
   const liParent = modalOpenImg.parentNode;
   let liRightimg;
   if (liParent.nextElementSibling!== null) {
@@ -146,15 +145,12 @@ function cuurentImgModalRight() {
     liRightimg = galleryList.firstElementChild;
   }
   const imgRight = liRightimg.firstElementChild;
-  const imgRightOriginal = imgRight.dataset.source;
-  const imgRightalt = imgRightOriginal.alt;
 
-  modalImg.src = imgRightOriginal;
-  modalImg.alt = imgRightalt;
+  modalImg.src = imgRight.dataset.source;
+  modalImg.alt = imgRightOriginal.alt;
 
   modalOpenImg = imgRight;
-  }
-
+};
 
 function onEscAndArrowKeyPress(e) {
   
@@ -163,10 +159,10 @@ function onEscAndArrowKeyPress(e) {
   };
 
   if (e.code === `ArrowLeft`) {
-    cuurentImgModalLeft();
+    mixImgInModalLeft();
   };
   
   if (e.code === `ArrowRight`) {
-    cuurentImgModalRight();
+    mixImgInModalRight();
   }
-}
+};
